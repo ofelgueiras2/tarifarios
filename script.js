@@ -17,7 +17,7 @@ async function carregarTarifarios() {
             const nome = row.c[0]?.v || "Desconhecido";
             const potencia = parseFloat(row.c[1]?.v) || 0;
             const simples = parseFloat(row.c[2]?.v) || 0;
-            const custo = (potencia * 30 + simples * 250).toFixed(2);
+            const custo = (potencia * 30 + simples * consumo).toFixed(2);
             return { nome, potencia, simples, custo: parseFloat(custo) };
         });
         
