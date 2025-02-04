@@ -4,6 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comparador de Tarifários</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        #listaTarifarios div {
+            margin: 5px 0;
+        }
+    </style>
     <script>
         async function carregarTarifarios() {
             const sheetURL = "https://docs.google.com/spreadsheets/d/1PhbpG35wn4aF4XA-FQHKgowr3iCvEprp/gviz/tq?tqx=out:json";
@@ -14,9 +62,6 @@
                 }
                 
                 const texto = await resposta.text();
-                console.log("Resposta da Google Sheets:", texto); // Debugging
-                document.getElementById("debug").innerText = "Dados recebidos da Google Sheets!";
-                
                 if (!texto.includes("google.visualization.Query.setResponse")) {
                     throw new Error("Formato inesperado dos dados. Verifique o Google Sheets.");
                 }
@@ -34,11 +79,9 @@
                 }));
                 
                 preencherLista(tarifarios);
-                calcularPreco(); // Calcula preço inicial com cenário base
+                calcularPreco();
             } catch (erro) {
-                console.error("Erro ao carregar tarifários:", erro);
                 document.getElementById("listaTarifarios").innerHTML = `❌ ${erro.message}`;
-                document.getElementById("debug").innerText = erro.message;
             }
         }
         
@@ -65,17 +108,17 @@
                 return;
             }
             
-            let tabelaResultados = `<table border='1' style='width: 100%; border-collapse: collapse;'>
+            let tabelaResultados = `<table>
                                         <tr>
-                                            <th style='padding: 8px; border: 1px solid black;'>Tarifário</th>
-                                            <th style='padding: 8px; border: 1px solid black;'>Custo Estimado (€)</th>
+                                            <th>Tarifário</th>
+                                            <th>Custo Estimado (€)</th>
                                         </tr>`;
             
             tarifariosSelecionados.forEach(tarifa => {
-                let precoEstimado = (consumo * 0.15 + potencia * 0.30).toFixed(2); // Ajustar cálculo conforme necessário
+                let precoEstimado = (consumo * 0.15 + potencia * 0.30).toFixed(2);
                 tabelaResultados += `<tr>
-                                        <td style='padding: 8px; border: 1px solid black;'>${tarifa}</td>
-                                        <td style='padding: 8px; border: 1px solid black;'>${precoEstimado}€</td>
+                                        <td>${tarifa}</td>
+                                        <td>${precoEstimado}€</td>
                                      </tr>`;
             });
             
@@ -89,20 +132,17 @@
 <body>
     <h1>Comparador de Tarifários</h1>
     <label>Consumo (kWh/mês):</label>
-    <input type="number" id="consumo" value="250" onchange="calcularPreco()"/><br><br>
+    <input type="number" id="consumo" value="250" onchange="calcularPreco()"/>
     
     <label>Potência Contratada (kVA):</label>
-    <input type="number" id="potencia" value="6.9" onchange="calcularPreco()"/><br><br>
+    <input type="number" id="potencia" value="6.9" onchange="calcularPreco()"/>
     
     <h3>Selecione os tarifários:</h3>
-    <div id="listaTarifarios">⏳ Carregando tarifários...</div><br>
+    <div id="listaTarifarios">⏳ Carregando tarifários...</div>
     
     <button onclick="calcularPreco()">Calcular</button>
     
     <h2>Resultado:</h2>
     <div id="resultado"></div>
-    
-    <h3>Debug Info:</h3>
-    <p id="debug">Aguardando resposta...</p>
 </body>
 </html>
