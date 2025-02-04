@@ -13,19 +13,25 @@ async function carregarTarifarios() {
             throw new Error("Nenhum tarifário encontrado na folha de cálculo.");
         }
         
-        const tarifarios = json.table.rows.map(row => {
-            const nome = row.c[0]?.v || "Desconhecido";
-            const potencia = parseFloat(row.c[1]?.v) || 0;
-            const simples = parseFloat(row.c[2]?.v) || 0;
-            const custo = (potencia * 30 + simples * consumo).toFixed(2);
-            return { nome, potencia, simples, custo: parseFloat(custo) };
-        });
-        
-        preencherLista(tarifarios);
-        calcularPreco(tarifarios);
+        atualizarResultados(json);
     } catch (erro) {
         document.getElementById("listaTarifarios").innerHTML = `❌ ${erro.message}`;
     }
+}
+
+function atualizarResultados(json) {
+    const consumo = parseFloat(document.getElementById("consumo").value) || 250;
+    
+    const tarifarios = json.table.rows.map(row => {
+        const nome = row.c[0]?.v || "Desconhecido";
+        const potencia = parseFloat(row.c[1]?.v) || 0;
+        const simples = parseFloat(row.c[2]?.v) || 0;
+        const custo = (potencia * 30 + simples * consumo).toFixed(2);
+        return { nome, potencia, simples, custo: parseFloat(custo) };
+    });
+    
+    preencherLista(tarifarios);
+    calcularPreco(tarifarios);
 }
 
 function preencherLista(tarifarios) {
