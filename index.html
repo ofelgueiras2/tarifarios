@@ -110,13 +110,19 @@
             const mediana = custos.sort((a, b) => a - b)[Math.floor(custos.length / 2)];
             
             function calcularCor(custo) {
+                const corMin = [90, 138, 198]; // #5A8AC6
+                const corMed = [252, 252, 255]; // #FCFCFF
+                const corMax = [248, 105, 107]; // #F8696B
+                let corFinal;
+                
                 if (custo <= mediana) {
-                    const percent = (custo - minCusto) / (mediana - minCusto);
-                    return `rgb(${250 * percent + 90}, ${250 * percent + 138}, ${198 - 198 * percent})`;
+                    const percent = (custo - minCusto) / (mediana - minCusto || 1);
+                    corFinal = corMin.map((c, i) => Math.round(c + percent * (corMed[i] - c)));
                 } else {
-                    const percent = (custo - mediana) / (maxCusto - mediana);
-                    return `rgb(${248 - 248 * percent}, ${105 - 105 * percent}, ${107 + 148 * percent})`;
+                    const percent = (custo - mediana) / (maxCusto - mediana || 1);
+                    corFinal = corMed.map((c, i) => Math.round(c + percent * (corMax[i] - c)));
                 }
+                return `rgb(${corFinal[0]}, ${corFinal[1]}, ${corFinal[2]})`;
             }
             
             let tabelaResultados = `<table>
