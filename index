@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparador de Tarifários</title>
+    <script>
+        async function carregarTarifarios() {
+            const sheetURL = "https://docs.google.com/spreadsheets/d/1PhbpG35wn4aF4XA-FQHKgowr3iCvEprp/gviz/tq?tqx=out:json";
+            try {
+                const resposta = await fetch(sheetURL);
+                if (!resposta.ok) {
+                    throw new Error(`Erro HTTP: ${resposta.status}`);
+                }
+                
+                const texto = await resposta.text();
+                console.log("Resposta da Google Sheets:", texto); // Debugging
+                document.getElementById("debug").innerText = "Dados recebidos da Google Sheets!";
+                
+                if (!texto.includes("google.visualization.Query.setResponse")) {
+                    throw new Error("Formato inesperado dos dados. Verifique o Google Sheets.");
+                }
+                
+                const json = JSON.parse(texto.substr(47).slice(0, -2));
+                if (!json.table || !json.table.rows || json.table.rows.length === 0) {
+                    throw new Error("Nenhum tarifário encontrado na folha de cálculo.");
+                }
+                
+                const tarifarios = json.table.rows.map(row => ({
+                    nome: row.c[0]?.v || "Desconhecido",
+                    tipo: row.c[1]?.v || "N/A",
+                    precoFixo: row.c[2]?.v || "-",
+                    indexado: row.c[3]?.v || "-"
+                }));
+                
+                preencherLista(tarifarios);
+                calcularPreco(); // Calcula preço inicial com cenário base
+            } catch (erro) {
+                console.error("Erro ao carregar tarifários:", erro);
+                document.getElementById("listaTarifarios").innerHTML = `❌ ${erro.message}`;
+                document.getElementById("debug").innerText = erro.message;
+            }
+        }
+        
+        function preencherLista(tarifarios) {
+            const lista = document.getElementById("listaTarifarios");
+            lista.innerHTML = "";
+            
+            tarifarios.forEach(tarifa => {
+                const item = document.createElement("div");
+                item.innerHTML = `<input type='checkbox' value='${tarifa.nome}' checked/> ${tarifa.nome} (${tarifa.tipo})`;
+                lista.appendChild(item);
+            });
+        }
+        
+        function calcularPreco() {
+            const consumo = parseFloat(document.getElementById("consumo").value) || 250;
+            const potencia = parseFloat(document.getElementById("potencia").value) || 6.9;
+            
+            const tarifariosSelecionados = [...document.querySelectorAll("#listaTarifarios input:checked")] 
+                .map(el => el.value);
+            
+            if (tarifariosSelecionados.length === 0) {
+                document.getElementById("resultado").innerHTML = "<p>⚠️ Por favor, selecione pelo menos um tarifário.</p>";
+                return;
+            }
+            
+            let tabelaResultados = `<table border='1' style='width: 100%; border-collapse: collapse;'>
+                                        <tr>
+                                            <th style='padding: 8px; border: 1px solid black;'>Tarifário</th>
+                                            <th style='padding: 8px; border: 1px solid black;'>Custo Estimado (€)</th>
+                                        </tr>`;
+            
+            tarifariosSelecionados.forEach(tarifa => {
+                let precoEstimado = (consumo * 0.15 + potencia * 0.30).toFixed(2); // Ajustar cálculo conforme necessário
+                tabelaResultados += `<tr>
+                                        <td style='padding: 8px; border: 1px solid black;'>${tarifa}</td>
+                                        <td style='padding: 8px; border: 1px solid black;'>${precoEstimado}€</td>
+                                     </tr>`;
+            });
+            
+            tabelaResultados += "</table>";
+            document.getElementById("resultado").innerHTML = tabelaResultados;
+        }
+        
+        window.onload = carregarTarifarios;
+    </script>
+</head>
+<body>
+    <h1>Comparador de Tarifários</h1>
+    <label>Consumo (kWh/mês):</label>
+    <input type="number" id="consumo" value="250" onchange="calcularPreco()"/><br><br>
+    
+    <label>Potência Contratada (kVA):</label>
+    <input type="number" id="potencia" value="6.9" onchange="calcularPreco()"/><br><br>
+    
+    <h3>Selecione os tarifários:</h3>
+    <div id="listaTarifarios">⏳ Carregando tarifários...</div><br>
+    
+    <button onclick="calcularPreco()">Calcular</button>
+    
+    <h2>Resultado:</h2>
+    <div id="resultado"></div>
+    
+    <h3>Debug Info:</h3>
+    <p id="debug">Aguardando resposta...</p>
+</body>
+</html>
