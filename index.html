@@ -94,6 +94,28 @@
             });
         }
         
+        function calcularPreco(tarifarios) {
+            let tabelaResultados = `<table>
+                                        <tr>
+                                            <th>Tarifário</th>
+                                            <th>Potência (€/dia)</th>
+                                            <th>Simples (€/kWh)</th>
+                                            <th>Custo Estimado (€)</th>
+                                        </tr>`;
+            
+            tarifarios.forEach(tarifa => {
+                tabelaResultados += `<tr>
+                                        <td>${tarifa.nome}</td>
+                                        <td>${tarifa.potencia.toFixed(4)}</td>
+                                        <td>${tarifa.simples.toFixed(4)}</td>
+                                        <td>${tarifa.custo.toFixed(2)}€</td>
+                                     </tr>`;
+            });
+            
+            tabelaResultados += "</table>";
+            document.getElementById("resultado").innerHTML = tabelaResultados;
+        }
+        
         window.onload = carregarTarifarios;
     </script>
 </head>
