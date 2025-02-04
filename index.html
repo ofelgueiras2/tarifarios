@@ -54,7 +54,7 @@
     </style>
     <script>
         async function carregarTarifarios() {
-            const sheetURL = "https://docs.google.com/spreadsheets/d/1PhbpG35wn4aF4XA-FQHKgowr3iCvEprp/gviz/tq?tqx=out:json&range=C7:C26";
+            const sheetURL = "https://docs.google.com/spreadsheets/d/1PhbpG35wn4aF4XA-FQHKgowr3iCvEprp/gviz/tq?tqx=out:json&range=C7:I26";
             try {
                 const resposta = await fetch(sheetURL);
                 if (!resposta.ok) {
@@ -72,11 +72,13 @@
                 }
                 
                 const tarifarios = json.table.rows
-                    .map(row => row.c[0]?.v)
-                    .filter(nome => nome);
+                    .map(row => ({
+                        nome: row.c[0]?.v,
+                        custo: row.c[6]?.v
+                    }))
+                    .filter(tarifa => tarifa.nome && tarifa.custo);
                 
                 preencherLista(tarifarios);
-                calcularPreco();
             } catch (erro) {
                 document.getElementById("listaTarifarios").innerHTML = `❌ ${erro.message}`;
             }
@@ -88,17 +90,14 @@
             
             tarifarios.forEach(tarifa => {
                 const item = document.createElement("div");
-                item.innerHTML = `<input type='checkbox' value='${tarifa}' checked/> ${tarifa}`;
+                item.innerHTML = `<input type='checkbox' value='${tarifa.nome}' checked data-custo='${tarifa.custo}'/> ${tarifa.nome} (Custo Estimado: ${tarifa.custo}€)`;
                 lista.appendChild(item);
             });
         }
         
         function calcularPreco() {
-            const consumo = parseFloat(document.getElementById("consumo").value) || 250;
-            const potencia = parseFloat(document.getElementById("potencia").value) || 6.9;
-            
             const tarifariosSelecionados = [...document.querySelectorAll("#listaTarifarios input:checked")] 
-                .map(el => el.value);
+                .map(el => ({ nome: el.value, custo: parseFloat(el.getAttribute("data-custo")) }));
             
             if (tarifariosSelecionados.length === 0) {
                 document.getElementById("resultado").innerHTML = "<p>⚠️ Por favor, selecione pelo menos um tarifário.</p>";
@@ -112,10 +111,9 @@
                                         </tr>`;
             
             tarifariosSelecionados.forEach(tarifa => {
-                let precoEstimado = (consumo * 0.15 + potencia * 0.30).toFixed(2);
                 tabelaResultados += `<tr>
-                                        <td>${tarifa}</td>
-                                        <td>${precoEstimado}€</td>
+                                        <td>${tarifa.nome}</td>
+                                        <td>${tarifa.custo.toFixed(2)}€</td>
                                      </tr>`;
             });
             
@@ -128,12 +126,6 @@
 </head>
 <body>
     <h1>Comparador de Tarifários</h1>
-    <label>Consumo (kWh/mês):</label>
-    <input type="number" id="consumo" value="250" onchange="calcularPreco()"/>
-    
-    <label>Potência Contratada (kVA):</label>
-    <input type="number" id="potencia" value="6.9" onchange="calcularPreco()"/>
-    
     <h3>Selecione os tarifários:</h3>
     <div id="listaTarifarios">⏳ Carregando tarifários...</div>
     
