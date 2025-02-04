@@ -54,7 +54,7 @@
     </style>
     <script>
         async function carregarTarifarios() {
-            const sheetURL = "https://docs.google.com/spreadsheets/d/1PhbpG35wn4aF4XA-FQHKgowr3iCvEprp/gviz/tq?tqx=out:json";
+            const sheetURL = "https://docs.google.com/spreadsheets/d/1PhbpG35wn4aF4XA-FQHKgowr3iCvEprp/gviz/tq?tqx=out:json&range=C7:C26";
             try {
                 const resposta = await fetch(sheetURL);
                 if (!resposta.ok) {
@@ -71,12 +71,9 @@
                     throw new Error("Nenhum tarifário encontrado na folha de cálculo.");
                 }
                 
-                const tarifarios = json.table.rows.map(row => ({
-                    nome: row.c[0]?.v || "Desconhecido",
-                    tipo: row.c[1]?.v || "N/A",
-                    precoFixo: row.c[2]?.v || "-",
-                    indexado: row.c[3]?.v || "-"
-                }));
+                const tarifarios = json.table.rows
+                    .map(row => row.c[0]?.v)
+                    .filter(nome => nome);
                 
                 preencherLista(tarifarios);
                 calcularPreco();
@@ -91,7 +88,7 @@
             
             tarifarios.forEach(tarifa => {
                 const item = document.createElement("div");
-                item.innerHTML = `<input type='checkbox' value='${tarifa.nome}' checked/> ${tarifa.nome} (${tarifa.tipo})`;
+                item.innerHTML = `<input type='checkbox' value='${tarifa}' checked/> ${tarifa}`;
                 lista.appendChild(item);
             });
         }
