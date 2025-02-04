@@ -62,26 +62,32 @@
                 }
                 
                 const texto = await resposta.text();
+                console.log("Resposta do Google Sheets:", texto);
+                
                 if (!texto.includes("google.visualization.Query.setResponse")) {
                     throw new Error("Formato inesperado dos dados. Verifique o Google Sheets.");
                 }
                 
                 const json = JSON.parse(texto.substr(47).slice(0, -2));
+                console.log("JSON extraído:", json);
+                
                 if (!json.table || !json.table.rows || json.table.rows.length === 0) {
                     throw new Error("Nenhum tarifário encontrado na folha de cálculo.");
                 }
                 
-                const tarifarios = json.table.rows
-                    .map(row => ({
-                        nome: row.c[0]?.v,
-                        potencia: parseFloat(row.c[1]?.v) || 0,
-                        simples: parseFloat(row.c[2]?.v) || 0,
-                        custo: (parseFloat(row.c[1]?.v || 0) * 30 + parseFloat(row.c[2]?.v || 0) * 250)
-                    }))
-                    .filter(tarifa => tarifa.nome && !isNaN(tarifa.custo));
+                const tarifarios = json.table.rows.map(row => {
+                    const nome = row.c[0]?.v || "Desconhecido";
+                    const potencia = parseFloat(row.c[1]?.v) || 0;
+                    const simples = parseFloat(row.c[2]?.v) || 0;
+                    const custo = (potencia * 30 + simples * 250).toFixed(2);
+                    return { nome, potencia, simples, custo: parseFloat(custo) };
+                });
                 
+                console.log("Tarifários processados:", tarifarios);
                 preencherLista(tarifarios);
+                calcularPreco(tarifarios);
             } catch (erro) {
+                console.error("Erro ao carregar tarifários:", erro);
                 document.getElementById("listaTarifarios").innerHTML = `❌ ${erro.message}`;
             }
         }
@@ -97,18 +103,10 @@
             });
         }
         
-        function calcularPreco() {
-            const tarifariosSelecionados = [...document.querySelectorAll("#listaTarifarios input:checked")] 
-                .map(el => ({ nome: el.value, custo: parseFloat(el.getAttribute("data-custo")) }));
-            
-            if (tarifariosSelecionados.length === 0) {
-                document.getElementById("resultado").innerHTML = "<p>⚠️ Por favor, selecione pelo menos um tarifário.</p>";
-                return;
-            }
-            
-            const minCusto = Math.min(...tarifariosSelecionados.map(t => t.custo));
-            const maxCusto = Math.max(...tarifariosSelecionados.map(t => t.custo));
-            const mediana = tarifariosSelecionados.sort((a, b) => a.custo - b.custo)[Math.floor(tarifariosSelecionados.length / 2)].custo;
+        function calcularPreco(tarifarios) {
+            const minCusto = Math.min(...tarifarios.map(t => t.custo));
+            const maxCusto = Math.max(...tarifarios.map(t => t.custo));
+            const mediana = tarifarios.sort((a, b) => a.custo - b.custo)[Math.floor(tarifarios.length / 2)].custo;
             
             function calcularCor(custo) {
                 const corMin = [90, 138, 198]; // #5A8AC6
@@ -134,7 +132,7 @@
                                             <th>Custo Estimado (€)</th>
                                         </tr>`;
             
-            tarifariosSelecionados.forEach(tarifa => {
+            tarifarios.forEach(tarifa => {
                 const corFundo = calcularCor(tarifa.custo);
                 const isMin = tarifa.custo === minCusto ? "font-weight:bold;" : "";
                 tabelaResultados += `<tr>
@@ -155,7 +153,7 @@
 <body>
     <h1>Comparador de Tarifários</h1>
     
-    <button onclick="calcularPreco()">Calcular</button>
+    <button onclick="carregarTarifarios()">Recarregar Tarifários</button>
     
     <h2>Resultado:</h2>
     <div id="resultado"></div>
