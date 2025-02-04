@@ -54,7 +54,7 @@
     </style>
     <script>
         async function carregarTarifarios() {
-            const sheetURL = "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/gviz/tq?tqx=out:json&range=B5:D25";
+            const sheetURL = "https://docs.google.com/spreadsheets/d/15jAgyfFzlSXTxqMNG-7TD-f-ZAWa5tZQwUQ8E-I8BsE/gviz/tq?tqx=out:json&range=B5:D25";
             try {
                 const resposta = await fetch(sheetURL);
                 if (!resposta.ok) {
@@ -74,7 +74,9 @@
                 const tarifarios = json.table.rows
                     .map(row => ({
                         nome: row.c[0]?.v,
-                        custo: row.c[2]?.v
+                        potencia: row.c[1]?.v,
+                        simples: row.c[2]?.v,
+                        custo: (parseFloat(row.c[1]?.v || 0) * 30 + parseFloat(row.c[2]?.v || 0) * 250).toFixed(2)
                     }))
                     .filter(tarifa => tarifa.nome && tarifa.custo);
                 
@@ -104,39 +106,20 @@
                 return;
             }
             
-            const custos = tarifariosSelecionados.map(t => t.custo);
-            const minCusto = Math.min(...custos);
-            const maxCusto = Math.max(...custos);
-            const mediana = custos.sort((a, b) => a - b)[Math.floor(custos.length / 2)];
-            
-            function calcularCor(custo) {
-                const corMin = [90, 138, 198]; // #5A8AC6
-                const corMed = [252, 252, 255]; // #FCFCFF
-                const corMax = [248, 105, 107]; // #F8696B
-                let corFinal;
-                
-                if (custo <= mediana) {
-                    const percent = (custo - minCusto) / (mediana - minCusto || 1);
-                    corFinal = corMin.map((c, i) => Math.round(c + percent * (corMed[i] - c)));
-                } else {
-                    const percent = (custo - mediana) / (maxCusto - mediana || 1);
-                    corFinal = corMed.map((c, i) => Math.round(c + percent * (corMax[i] - c)));
-                }
-                return `rgb(${corFinal[0]}, ${corFinal[1]}, ${corFinal[2]})`;
-            }
-            
             let tabelaResultados = `<table>
                                         <tr>
                                             <th>Tarifário</th>
+                                            <th>Potência (€/dia)</th>
+                                            <th>Simples (€/kWh)</th>
                                             <th>Custo Estimado (€)</th>
                                         </tr>`;
             
             tarifariosSelecionados.forEach(tarifa => {
-                const corFundo = calcularCor(tarifa.custo);
-                const isMin = tarifa.custo === minCusto ? "font-weight:bold;" : "";
                 tabelaResultados += `<tr>
                                         <td>${tarifa.nome}</td>
-                                        <td style='${isMin} background-color:${corFundo}; color:black;'>${tarifa.custo.toFixed(2)}€</td>
+                                        <td>${tarifa.potencia}</td>
+                                        <td>${tarifa.simples}</td>
+                                        <td>${tarifa.custo}€</td>
                                      </tr>`;
             });
             
