@@ -39,4 +39,56 @@ function preencherLista(tarifarios) {
     });
 }
 
+function calcularPreco(tarifarios) {
+    const minPotencia = Math.min(...tarifarios.map(t => t.potencia));
+    const maxPotencia = Math.max(...tarifarios.map(t => t.potencia));
+    const minSimples = Math.min(...tarifarios.map(t => t.simples));
+    const maxSimples = Math.max(...tarifarios.map(t => t.simples));
+    const minCusto = Math.min(...tarifarios.map(t => t.custo));
+    const maxCusto = Math.max(...tarifarios.map(t => t.custo));
+    
+    function calcularCor(valor, min, max) {
+        const corMin = [90, 138, 198]; // #5A8AC6
+        const corMed = [252, 252, 255]; // #FCFCFF
+        const corMax = [248, 105, 107]; // #F8696B
+        let corFinal;
+        if (valor <= (min + max) / 2) {
+            const percent = (valor - min) / ((min + max) / 2 - min || 1);
+            corFinal = corMin.map((c, i) => Math.round(c + percent * (corMed[i] - c)));
+        } else {
+            const percent = (valor - (min + max) / 2) / (max - (min + max) / 2 || 1);
+            corFinal = corMed.map((c, i) => Math.round(c + percent * (corMax[i] - c)));
+        }
+        return `rgb(${corFinal[0]}, ${corFinal[1]}, ${corFinal[2]})`;
+    }
+    
+    let tabelaResultados = `<table>
+                                <tr>
+                                    <th>Tarifário</th>
+                                    <th>Potência (€/dia)</th>
+                                    <th>Simples (€/kWh)</th>
+                                    <th>Custo Estimado (€)</th>
+                                </tr>`;
+    
+    tarifarios.forEach(tarifa => {
+        const corPotencia = calcularCor(tarifa.potencia, minPotencia, maxPotencia);
+        const corSimples = calcularCor(tarifa.simples, minSimples, maxSimples);
+        const corCusto = calcularCor(tarifa.custo, minCusto, maxCusto);
+        
+        const isMinPotencia = tarifa.potencia === minPotencia ? "font-weight:bold;" : "";
+        const isMinSimples = tarifa.simples === minSimples ? "font-weight:bold;" : "";
+        const isMinCusto = tarifa.custo === minCusto ? "font-weight:bold;" : "";
+        
+        tabelaResultados += `<tr>
+                                <td>${tarifa.nome}</td>
+                                <td style='${isMinPotencia} background-color:${corPotencia}; color:black;'>${tarifa.potencia.toFixed(4)}</td>
+                                <td style='${isMinSimples} background-color:${corSimples}; color:black;'>${tarifa.simples.toFixed(4)}</td>
+                                <td style='${isMinCusto} background-color:${corCusto}; color:black;'>${tarifa.custo.toFixed(2)}€</td>
+                             </tr>`;
+    });
+    
+    tabelaResultados += "</table>";
+    document.getElementById("resultado").innerHTML = tabelaResultados;
+}
+
 window.onload = carregarTarifarios;
