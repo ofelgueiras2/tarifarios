@@ -104,6 +104,16 @@
                 return;
             }
             
+            const minCusto = Math.min(...tarifariosSelecionados.map(t => t.custo));
+            const maxCusto = Math.max(...tarifariosSelecionados.map(t => t.custo));
+            
+            function calcularCor(custo) {
+                const percent = (custo - minCusto) / (maxCusto - minCusto);
+                const red = Math.round(255 * percent);
+                const blue = Math.round(255 * (1 - percent));
+                return `rgb(${red}, 0, ${blue})`;
+            }
+            
             let tabelaResultados = `<table>
                                         <tr>
                                             <th>Tarifário</th>
@@ -111,7 +121,8 @@
                                         </tr>`;
             
             tarifariosSelecionados.forEach(tarifa => {
-                tabelaResultados += `<tr>
+                const corFundo = calcularCor(tarifa.custo);
+                tabelaResultados += `<tr style='background-color:${corFundo}; color:white;'>
                                         <td>${tarifa.nome}</td>
                                         <td>${tarifa.custo.toFixed(2)}€</td>
                                      </tr>`;
