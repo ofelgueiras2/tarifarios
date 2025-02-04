@@ -83,6 +83,17 @@
             }
         }
         
+        function preencherLista(tarifarios) {
+            const lista = document.getElementById("listaTarifarios");
+            lista.innerHTML = "";
+            
+            tarifarios.forEach(tarifa => {
+                const item = document.createElement("div");
+                item.innerHTML = `<input type='checkbox' value='${tarifa.nome}' checked data-custo='${tarifa.custo}'/> ${tarifa.nome} (Custo Estimado: ${tarifa.custo.toFixed(2)}€)`;
+                lista.appendChild(item);
+            });
+        }
+        
         function calcularPreco(tarifarios) {
             const minPotencia = Math.min(...tarifarios.map(t => t.potencia));
             const maxPotencia = Math.max(...tarifarios.map(t => t.potencia));
