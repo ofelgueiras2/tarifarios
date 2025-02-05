@@ -36,13 +36,20 @@ function atualizarResultados(json) {
     const colPotencia = 1 + colIndex * 2; // C, E, G...
     const colSimples = colPotencia + 1;   // D, F, H...
     
-    const tarifarios = json.table.rows.slice(0, 23).map((row, i) => {
-        const nome = row.c[0]?.v || "Desconhecido"; // Coluna B
+    let tarifarios = json.table.rows.slice(0, 23).map(row => {
+        const nome = row.c[0]?.v || "Desconhecido";
         const potencia = parseFloat(row.c[colPotencia]?.v) || 0;
         const simples = parseFloat(row.c[colSimples]?.v) || 0;
         const custo = (potencia * 30 + simples * consumo).toFixed(2);
         return { nome, potencia, simples, custo: parseFloat(custo) };
     });
+    
+    // Ordenação conforme a opção selecionada
+    if (ordenarPor === "preco") {
+        tarifarios.sort((a, b) => a.custo - b.custo);
+    } else if (ordenarPor === "tarifario") {
+        tarifarios.sort((a, b) => a.nome.localeCompare(b.nome));
+    }
     
     preencherLista(tarifarios);
     calcularPreco(tarifarios, consumo, potenciaSelecionada);
