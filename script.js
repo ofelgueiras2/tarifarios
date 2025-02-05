@@ -20,7 +20,8 @@ async function carregarTarifarios() {
 }
 
 function atualizarResultados(json) {
-    const consumo = parseFloat(document.getElementById("consumo").value) || 250;
+    let consumo = parseFloat(document.getElementById("consumo").value);
+    if (isNaN(consumo)) consumo = 0;
     
     const tarifarios = json.table.rows.map(row => {
         const nome = row.c[0]?.v || "Desconhecido";
