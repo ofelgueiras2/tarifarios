@@ -106,4 +106,5 @@ function calcularPreco(tarifarios) {
     document.getElementById("resultado").innerHTML = tabelaResultados;
 }
 
+document.getElementById("consumo").addEventListener("input", carregarTarifarios);
 window.onload = carregarTarifarios;
