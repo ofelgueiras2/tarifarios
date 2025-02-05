@@ -23,7 +23,6 @@ function atualizarResultados(json) {
     let consumo = parseFloat(document.getElementById("consumo").value);
     let potenciaSelecionada = parseFloat(document.getElementById("potenciac").value);
     if (isNaN(consumo)) consumo = 0;
-    if (isNaN(potenciaSelecionada)) potenciaSelecionada = 6.9;
     
     const tarifarios = json.table.rows.map(row => {
         const nome = row.c[0]?.v || "Desconhecido";
@@ -48,7 +47,7 @@ function preencherLista(tarifarios) {
     });
 }
 
-function calcularPreco(tarifarios, consumo) {
+function calcularPreco(tarifarios, consumo, potenciaSelecionada) {
     const minPotencia = Math.min(...tarifarios.map(t => t.potencia));
     const maxPotencia = Math.max(...tarifarios.map(t => t.potencia));
     const minSimples = Math.min(...tarifarios.map(t => t.simples));
@@ -73,7 +72,7 @@ function calcularPreco(tarifarios, consumo) {
     
     let tabelaResultados = `<table>
                                 <tr>
-                                    <th colspan="3">Potência contratada ${potenciaSelecionada} kVA</th>
+                                    <th colspan="3">Potência contratada ${potenciaSelecionada}</th>
                                     <th>Consumo (kWh)</th>
                                 </tr>
                                 <tr>
