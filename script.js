@@ -21,7 +21,7 @@ async function carregarTarifarios() {
 
 function atualizarResultados(json) {
     let consumo = parseFloat(document.getElementById("consumo").value);
-    let potenciaSelecionada = parseFloat(document.getElementById("potenciac").value);
+    let potenciaSelecionada = document.getElementById("potenciac").value;
     if (isNaN(consumo)) consumo = 0;
     if (!potenciaSelecionada) potenciaSelecionada = "6,9 kVA";
     
