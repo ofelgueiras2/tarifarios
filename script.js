@@ -32,7 +32,7 @@ function atualizarResultados(json) {
     });
     
     preencherLista(tarifarios);
-    calcularPreco(tarifarios);
+    calcularPreco(tarifarios, consumo);
 }
 
 function preencherLista(tarifarios) {
@@ -46,7 +46,7 @@ function preencherLista(tarifarios) {
     });
 }
 
-function calcularPreco(tarifarios) {
+function calcularPreco(tarifarios, consumo) {
     const minPotencia = Math.min(...tarifarios.map(t => t.potencia));
     const maxPotencia = Math.max(...tarifarios.map(t => t.potencia));
     const minSimples = Math.min(...tarifarios.map(t => t.simples));
