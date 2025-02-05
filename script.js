@@ -23,7 +23,7 @@ function atualizarResultados(json) {
     let consumo = parseFloat(document.getElementById("consumo").value);
     let potenciaSelecionada = parseFloat(document.getElementById("potenciac").value);
     if (isNaN(consumo)) consumo = 0;
-    if (isNaN(potenciaSelecionada)) potenciaSelecionada = "6,9 kVA";
+    if (!(potenciaSelecionada)) potenciaSelecionada = "6,9 kVA";
     
     const tarifarios = json.table.rows.map(row => {
         const nome = row.c[0]?.v || "Desconhecido";
