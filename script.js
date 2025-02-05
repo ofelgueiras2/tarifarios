@@ -1,5 +1,5 @@
 async function carregarTarifarios() {
-    const sheetURL = "https://docs.google.com/spreadsheets/d/15jAgyfFzlSXTxqMNG-7TD-f-ZAWa5tZQwUQ8E-I8BsE/gviz/tq?tqx=out:json&range=B5:D25";
+    const sheetURL = "https://docs.google.com/spreadsheets/d/15jAgyfFzlSXTxqMNG-7TD-f-ZAWa5tZQwUQ8E-I8BsE/gviz/tq?tqx=out:json&range=B2:V25";
     try {
         const resposta = await fetch(sheetURL);
         if (!resposta.ok) {
@@ -25,10 +25,21 @@ function atualizarResultados(json) {
     if (isNaN(consumo)) consumo = 0;
     if (!potenciaSelecionada) potenciaSelecionada = "6,9 kVA";
     
-    const tarifarios = json.table.rows.map(row => {
-        const nome = row.c[0]?.v || "Desconhecido";
-        const potencia = parseFloat(row.c[1]?.v) || 0;
-        const simples = parseFloat(row.c[2]?.v) || 0;
+    // Identificar a coluna correspondente à potência selecionada
+    const potencias = ["1,15 kVA", "2,3 kVA", "3,45 kVA", "4,6 kVA", "5,75 kVA", "6,9 kVA", "10,35 kVA", "13,8 kVA", "17,25 kVA", "20,7 kVA"];
+    const colIndex = potencias.indexOf(potenciaSelecionada);
+    if (colIndex === -1) {
+        throw new Error("Potência selecionada inválida.");
+    }
+    
+    // Determinar os índices das colunas de potência e simples
+    const colPotencia = 2 + colIndex * 2; // C, E, G...
+    const colSimples = colPotencia + 1;   // D, F, H...
+    
+    const tarifarios = json.table.rows.slice(3, 23).map((row, i) => {
+        const nome = row.c[0]?.v || "Desconhecido"; // Coluna B
+        const potencia = parseFloat(row.c[colPotencia]?.v) || 0;
+        const simples = parseFloat(row.c[colSimples]?.v) || 0;
         const custo = (potencia * 30 + simples * consumo).toFixed(2);
         return { nome, potencia, simples, custo: parseFloat(custo) };
     });
