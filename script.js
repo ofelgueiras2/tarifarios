@@ -76,7 +76,7 @@ function calcularPreco(tarifarios) {
                                 </tr>
                                 <tr>
                                     <td colspan="3"></td>
-                                    <td>${consumo.toFixed(2)}</td>
+                                    <td>${consumo}</td>
                                 </tr>
                                 <tr>
                                     <th>Tarifário</th>
