@@ -36,7 +36,7 @@ function atualizarResultados(json) {
     const colPotencia = 1 + colIndex * 2; // C, E, G...
     const colSimples = colPotencia + 1;   // D, F, H...
     
-    const tarifarios = json.table.rows.slice(3, 23).map((row, i) => {
+    const tarifarios = json.table.rows.slice(0, 23).map((row, i) => {
         const nome = row.c[0]?.v || "Desconhecido"; // Coluna B
         const potencia = parseFloat(row.c[colPotencia]?.v) || 0;
         const simples = parseFloat(row.c[colSimples]?.v) || 0;
