@@ -73,7 +73,7 @@ function calcularPreco(tarifarios, consumo) {
     
     let tabelaResultados = `<table>
                                 <tr>
-                                    <th colspan="3">Potência contratada 6,9 kVA</th>
+                                    <th colspan="3">Potência contratada ${potenciaSelecionada} kVA</th>
                                     <th>Consumo (kWh)</th>
                                 </tr>
                                 <tr>
