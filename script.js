@@ -97,9 +97,9 @@ function calcularPreco(tarifarios, consumo, potenciaSelecionada) {
         
         tabelaResultados += `<tr>
                                 <td>${tarifa.nome}</td>
-                                <td style='background-color:${corPotencia}; color:black;'>${tarifa.potencia.toFixed(4)}</td>
-                                <td style='background-color:${corSimples}; color:black;'>${tarifa.simples.toFixed(4)}</td>
-                                <td style='background-color:${corCusto}; color:black;'>${tarifa.custo.toFixed(2)}€</td>
+                                <td style='${isMinPotencia} background-color:${corPotencia}; color:black;'>${tarifa.potencia.toFixed(4)}</td>
+                                <td style='${isMinSimples} background-color:${corSimples}; color:black;'>${tarifa.simples.toFixed(4)}</td>
+                                <td style='${isMinCusto} background-color:${corCusto}; color:black;'>${tarifa.custo.toFixed(2)}€</td>
                              </tr>`;
     });
     
