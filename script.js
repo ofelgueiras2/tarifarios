@@ -79,7 +79,7 @@ function calcularPreco(tarifarios, consumo, potenciaSelecionada) {
                                 <tr>
                                     <td style="background-color:#FFC000; color:white; text-align:center;">${consumo || 0}</td>
                                 </tr>
-                                <tr>
+                                <tr style="background-color:#00B050; color:white;">
                                     <th>Tarifário</th>
                                     <th>Potência (€/dia)</th>
                                     <th>Simples (€/kWh)</th>
