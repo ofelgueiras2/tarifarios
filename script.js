@@ -34,7 +34,7 @@ function atualizarResultados(json) {
     });
     
     preencherLista(tarifarios);
-    calcularPreco(tarifarios, consumo);
+    calcularPreco(tarifarios, consumo, potenciaSelecionada);
 }
 
 function preencherLista(tarifarios) {
@@ -92,15 +92,11 @@ function calcularPreco(tarifarios, consumo, potenciaSelecionada) {
         const corSimples = calcularCor(tarifa.simples, minSimples, maxSimples);
         const corCusto = calcularCor(tarifa.custo, minCusto, maxCusto);
         
-        const isMinPotencia = tarifa.potencia === minPotencia ? "font-weight:bold;" : "";
-        const isMinSimples = tarifa.simples === minSimples ? "font-weight:bold;" : "";
-        const isMinCusto = tarifa.custo === minCusto ? "font-weight:bold;" : "";
-        
         tabelaResultados += `<tr>
                                 <td>${tarifa.nome}</td>
-                                <td style='${isMinPotencia} background-color:${corPotencia}; color:black;'>${tarifa.potencia.toFixed(4)}</td>
-                                <td style='${isMinSimples} background-color:${corSimples}; color:black;'>${tarifa.simples.toFixed(4)}</td>
-                                <td style='${isMinCusto} background-color:${corCusto}; color:black;'>${tarifa.custo.toFixed(2)}€</td>
+                                <td style='background-color:${corPotencia}; color:black;'>${tarifa.potencia.toFixed(4)}</td>
+                                <td style='background-color:${corSimples}; color:black;'>${tarifa.simples.toFixed(4)}</td>
+                                <td style='background-color:${corCusto}; color:black;'>${tarifa.custo.toFixed(2)}€</td>
                              </tr>`;
     });
     
@@ -110,4 +106,6 @@ function calcularPreco(tarifarios, consumo, potenciaSelecionada) {
 
 document.getElementById("consumo").addEventListener("input", carregarTarifarios);
 document.getElementById("potenciac").addEventListener("change", carregarTarifarios);
+window.onload = carregarTarifarios;
+
 window.onload = carregarTarifarios;
