@@ -21,7 +21,7 @@ async function carregarTarifarios() {
 
 function atualizarResultados(json) {
     let consumo = parseFloat(document.getElementById("consumo").value);
-    let potenciaSelecionada = parseFloat(document.getElementById("potencia").value);
+    let potenciaSelecionada = parseFloat(document.getElementById("potenciac").value);
     if (isNaN(consumo)) consumo = 0;
     if (isNaN(potenciaSelecionada)) potenciaSelecionada = 6.9;
     
@@ -109,5 +109,5 @@ function calcularPreco(tarifarios, consumo) {
 }
 
 document.getElementById("consumo").addEventListener("input", carregarTarifarios);
-document.getElementById("potencia").addEventListener("change", carregarTarifarios);
+document.getElementById("potenciac").addEventListener("change", carregarTarifarios);
 window.onload = carregarTarifarios;
