@@ -80,10 +80,10 @@ function calcularPreco(tarifarios, consumo, potenciaSelecionada) {
                                     <td style="background-color:#FFC000; font-weight:bold; color:black; text-align:center;">${consumo || 0}</td>
                                 </tr>
                                 <tr>
-                                    <td style="background-color:#00B050; color:white;">Tarifário</td>
-                                    <td style="background-color:#00B050; color:white;">Potência (€/dia)</td>
-                                    <td style="background-color:#00B050; color:white;">Simples (€/kWh)</td>
-                                    <td style="background-color:#00B050; color:white;">Custo Estimado (€)</td>
+                                    <td style="background-color:#00B050; font-weight:bold; color:white;">Tarifário</td>
+                                    <td style="background-color:#00B050; font-weight:bold; color:white;">Potência (€/dia)</td>
+                                    <td style="background-color:#00B050; font-weight:bold; color:white;">Simples (€/kWh)</td>
+                                    <td style="background-color:#00B050; font-weight:bold; color:white;">Preço (€)</td>
                                 </tr>`;
     
     tarifarios.forEach(tarifa => {
