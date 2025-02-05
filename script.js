@@ -77,7 +77,7 @@ function calcularPreco(tarifarios, consumo, potenciaSelecionada) {
                                     <th style="background-color:#375623; color:white;">Consumo (kWh)</th>
                                 </tr>
                                 <tr>
-                                    <td style="background-color:#FFC000; color:black; text-align:center;">${consumo || 0}</td>
+                                    <td style="background-color:#FFC000; font-weight:bold; color:black; text-align:center;">${consumo || 0}</td>
                                 </tr>
                                 <tr style="background-color:#00B050; color:white;">
                                     <th>Tarifário</th>
@@ -99,7 +99,7 @@ function calcularPreco(tarifarios, consumo, potenciaSelecionada) {
                                 <td>${tarifa.nome}</td>
                                 <td style='${isMinPotencia} background-color:${corPotencia}; color:black;'>${tarifa.potencia.toFixed(4)}</td>
                                 <td style='${isMinSimples} background-color:${corSimples}; color:black;'>${tarifa.simples.toFixed(4)}</td>
-                                <td style='${isMinCusto} background-color:${corCusto}; color:black;'>${tarifa.custo.toFixed(2)}€</td>
+                                <td style='${isMinCusto} background-color:${corCusto}; color:black;'>${tarifa.custo.toFixed(2)}</td>
                              </tr>`;
     });
     
