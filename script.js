@@ -90,6 +90,10 @@ function calcularPreco(tarifarios, consumo, potenciaSelecionada) {
         const corPotencia = calcularCor(tarifa.potencia, minPotencia, maxPotencia);
         const corSimples = calcularCor(tarifa.simples, minSimples, maxSimples);
         const corCusto = calcularCor(tarifa.custo, minCusto, maxCusto);
+
+        const isMinPotencia = tarifa.potencia === minPotencia ? "font-weight:bold;" : "";
+        const isMinSimples = tarifa.simples === minSimples ? "font-weight:bold;" : "";
+        const isMinCusto = tarifa.custo === minCusto ? "font-weight:bold;" : "";
         
         tabelaResultados += `<tr>
                                 <td>${tarifa.nome}</td>
