@@ -109,4 +109,5 @@ function calcularPreco(tarifarios, consumo) {
 }
 
 document.getElementById("consumo").addEventListener("input", carregarTarifarios);
+document.getElementById("potencia").addEventListener("change", carregarTarifarios);
 window.onload = carregarTarifarios;
